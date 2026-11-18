@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071426">
+  <title>People | AREWAVERSE</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #071426;
+      color: #ffffff;
+    }
+
+    header {
+      padding: 22px 7%;
+      border-bottom: 1px solid #ffffff22;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .brand span {
+      color: #f4c45e;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: auto;
+      padding: 65px 24px;
+    }
+
+    .tag {
+      color: #f4c45e;
+      letter-spacing: 2px;
+      font-size: 13px;
+    }
+
+    h1 {
+      font-size: clamp(38px, 7vw, 65px);
+      margin-bottom: 15px;
+    }
+
+    .intro {
+      color: #b8c5d6;
+      line-height: 1.8;
+      max-width: 650px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 16px;
+      margin: 30px 0;
+      border: 1px solid #ffffff30;
+      border-radius: 10px;
+      background: #102c43;
+      color: white;
+      font-size: 16px;
+    }
+
+    .people {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .person {
+      padding: 24px;
+      background: #102c43;
+      border: 1px solid #ffffff20;
+      border-radius: 14px;
+    }
+
+    .person h2 {
+      color: #f4c45e;
+      font-size: 20px;
+    }
+
+    .person p {
+      color: #b8c5d6;
+      line-height: 1.6;
+    }
+
+    .status {
+      color: #f4c45e;
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #8294aa;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">AREWA<span>VERSE</span></div>
+  </header>
+
+  <main>
+    <div class="tag">PEOPLE · CONNECTION · COMMUNITY</div>
+
+    <h1>People make the ecosystem.</h1>
+
+    <p class="intro">
+      Discover people, build meaningful connections
+      and become part of a global community.
+    </p>
+
+    <input
+      class="search"
+      type="search"
+      placeholder="Discover people and communities..."
+    >
+
+    <section class="people">
+
+      <div class="person">
+        <h2>Creators</h2>
+        <p>Connect with people who create ideas and share creativity.</p>
+        <div class="status">Coming soon</div>
+      </div>
+
+      <div class="person">
+        <h2>Students</h2>
+        <p>Meet learners and people who believe in knowledge.</p>
+        <div class="status">Coming soon</div>
+      </div>
+
+      <div class="person">
+        <h2>Professionals</h2>
+        <p>Connect with skilled people across different industries.</p>
+        <div class="status">Coming soon</div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    AREWAVERSE · One Connected World
+  </footer>
+
+</body>
+</html>
