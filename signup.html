@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join AREWAVERSE</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #071426;
+      color: #EAF0F8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .signup-container {
+      width: 100%;
+      max-width: 440px;
+      background: #10243D;
+      padding: 32px 25px;
+      border: 1px solid #294563;
+      border-radius: 18px;
+    }
+
+    .logo {
+      text-align: center;
+      color: #D8B46B;
+      font-size: 27px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #AAB8CA;
+      margin-bottom: 28px;
+      font-size: 14px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 23px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 8px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      background: #071426;
+      color: white;
+      border: 1px solid #405873;
+      border-radius: 8px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #D8B46B;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 24px;
+      padding: 15px;
+      background: #D8B46B;
+      color: #071426;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    #message {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 23px;
+      font-size: 14px;
+      color: #AAB8CA;
+    }
+
+    a {
+      color: #D8B46B;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="signup-container">
+
+    <div class="logo">AREWAVERSE</div>
+
+    <p class="subtitle">
+      A global digital ecosystem connecting people,
+      culture and opportunities.
+    </p>
+
+    <h2>Create Your Account</h2>
+
+    <form id="signupForm">
+
+      <label for="name">Full Name</label>
+      <input
+        type="text"
+        id="name"
+        placeholder="Enter your full name"
+        required
+      >
+
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        placeholder="Choose a username"
+        pattern="[A-Za-z0-9_]{3,20}"
+        title="Use 3–20 letters, numbers or underscores"
+        required
+      >
+
+      <label for="email">Email Address</label>
+      <input
+        type="email"
+        id="email"
+        placeholder="Enter your email"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="At least 8 characters"
+        minlength="8"
+        required
+      >
+
+      <button type="submit" id="signupButton">
+        Create Account
+      </button>
+
+      <p id="message" role="status"></p>
+
+    </form>
+
+    <p class="login-link">
+      Already have an account?
+      <a href="login.html">Log in</a>
+    </p>
+
+  </main>
+
+  <script type="module">
+    import { createClient }
+      from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+    const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
+
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const form = document.getElementById('signupForm');
+    const button = document.getElementById('signupButton');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      button.disabled = true;
+      button.textContent = 'Creating account...';
+      message.textContent = '';
+
+      const fullName =
+        document.getElementById('name').value.trim();
+
+      const username =
+        document.getElementById('username').value
+          .trim().toLowerCase();
+
+      const email =
+        document.getElementById('email').value.trim();
+
+      const password =
+        document.getElementById('password').value;
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username: username,
+              display_name: fullName
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        message.textContent = data.session
+          ? 'Account created successfully!'
+          : 'Account created! Check your email to confirm your account.';
+
+        message.style.color = '#D8B46B';
+
+        if (data.session) {
+          window.location.href = 'dashboard.html';
+        }
+
+      } catch (error) {
+        message.textContent = error.message;
+        message.style.color = '#FF8585';
+
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Create Account';
+      }
+    });
+  </script>
+
+</body>
+</html>
