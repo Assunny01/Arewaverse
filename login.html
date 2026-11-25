@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | AREWAVERSE</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #071426;
+    font-family: Arial, sans-serif;
+    color: #EAF0F8;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 35px 28px;
+    background: #10243D;
+    border: 1px solid #294766;
+    border-radius: 16px;
+}
+
+h1 {
+    color: #D8B46B;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #B8C5D6;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 20px;
+    border: 1px solid #36506B;
+    border-radius: 8px;
+    background: #071426;
+    color: white;
+    outline: none;
+}
+
+input:focus {
+    border-color: #D8B46B;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #D8B46B;
+    color: #071426;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#message {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.links {
+    text-align: center;
+    margin-top: 22px;
+    font-size: 14px;
+    line-height: 2;
+}
+
+a {
+    color: #D8B46B;
+    text-decoration: none;
+}
+
+.back {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    color: #B8C5D6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <h1>AREWAVERSE</h1>
+    <p class="subtitle">A Global Digital Ecosystem</p>
+
+    <h2>Welcome Back</h2>
+
+    <form id="loginForm">
+
+        <label for="email">Email Address</label>
+        <input
+            type="email"
+            id="email"
+            placeholder="Enter your email"
+            required
+        >
+
+        <label for="password">Password</label>
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            required
+        >
+
+        <button type="submit" id="loginButton">
+            Sign In
+        </button>
+
+    </form>
+
+    <p id="message" role="status"></p>
+
+    <div class="links">
+        <a href="#" id="forgotPassword">Forgot Password?</a>
+        <p>Don't have an account?
+            <a href="signup.html">Create Account</a>
+        </p>
+    </div>
+
+    <a class="back" href="index.html">← Back to Home</a>
+
+</div>
+
+<script type="module">
+import { createClient }
+from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://mchsdzxfwvblpqqqarvz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_R-EKdAIno4p7gAQqh0P8pA_1JYsEke7';
+
+const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+const form = document.getElementById('loginForm');
+const message = document.getElementById('message');
+const button = document.getElementById('loginButton');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    button.disabled = true;
+    button.textContent = 'Signing in...';
+    message.textContent = '';
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    button.disabled = false;
+    button.textContent = 'Sign In';
+
+    if (error) {
+        message.style.color = '#FF8D8D';
+        message.textContent = error.message;
+        return;
+    }
+
+    message.style.color = '#D8B46B';
+    message.textContent = 'Login successful!';
+
+    window.location.href = 'dashboard.html';
+});
+
+document.getElementById('forgotPassword')
+.addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+
+    if (!email) {
+        message.style.color = '#FF8D8D';
+        message.textContent = 'Enter your email address first.';
+        return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/Arewaverse/reset-password.html'
+    });
+
+    message.style.color = error ? '#FF8D8D' : '#D8B46B';
+    message.textContent = error
+        ? error.message
+        : 'If this email is registered, a password reset link will be sent.';
+});
+</script>
+
+</body>
+</html>
