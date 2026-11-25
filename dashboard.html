@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AREWAVERSE | Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --navy:#071426;
+  --blue:#173B63;
+  --gold:#D8B46B;
+  --white:#EAF0F8;
+  --muted:#9BAEC5;
+  --panel:#10233B;
+  --line:#263B55;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--navy);
+  color:var(--white);
+}
+header{
+  height:66px;
+  background:#0B1B30;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 4%;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.brand{
+  font-size:23px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:var(--gold);
+}
+.search{
+  width:32%;
+  padding:11px 16px;
+  border:1px solid var(--line);
+  border-radius:25px;
+  background:var(--panel);
+  color:white;
+}
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+a{color:inherit;text-decoration:none}
+.header-actions a:hover,.nav a:hover{color:var(--gold)}
+.logout{
+  background:var(--gold);
+  color:var(--navy);
+  border:0;
+  border-radius:20px;
+  padding:9px 16px;
+  font-weight:bold;
+}
+.layout{
+  max-width:1450px;
+  margin:25px auto;
+  padding:0 22px;
+  display:grid;
+  grid-template-columns:240px minmax(300px,1fr) 245px;
+  gap:22px;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:16px;
+}
+.profile{
+  text-align:center;
+}
+.avatar{
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  background:var(--blue);
+  color:var(--gold);
+  display:grid;
+  place-items:center;
+  font-size:25px;
+  margin:0 auto 12px;
+}
+.username{color:var(--muted);font-size:13px}
+.section-title{
+  font-size:14px;
+  color:var(--gold);
+  margin:0 0 15px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.nav a{
+  padding:11px;
+  border-radius:8px;
+  font-size:14px;
+}
+.nav a.active{
+  background:#1B3553;
+  color:var(--gold);
+}
+.contribution{
+  display:flex;
+  justify-content:space-between;
+  padding:10px 2px;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+}
+.contribution:last-child{border:0}
+main h2{margin:4px 0 5px;font-size:24px}
+.subtitle{color:var(--muted);font-size:14px;margin-bottom:20px}
+.composer{
+  padding:18px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-bottom:18px;
+}
+.composer input{
+  width:100%;
+  padding:14px;
+  border-radius:25px;
+  border:1px solid var(--line);
+  background:#0B1B30;
+  color:white;
+}
+.composer-note{
+  color:var(--muted);
+  font-size:12px;
+  margin:12px 4px 0;
+}
+.empty{
+  text-align:center;
+  padding:55px 15px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.empty strong{color:var(--white)}
+.explore-item{
+  padding:12px 4px;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+}
+.explore-item:last-child{border:0}
+.explore-item span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:5px;
+}
+.account-info{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.8;
+  overflow-wrap:anywhere;
+}
+@media(max-width:950px){
+  .layout{grid-template-columns:210px 1fr}
+  .right-column{display:none}
+}
+@media(max-width:650px){
+  header{padding:0 14px;height:60px}
+  .brand{font-size:19px}
+  .search{display:none}
+  .header-actions{gap:12px;font-size:13px}
+  .layout{
+    display:flex;
+    flex-direction:column;
+    padding:0 12px;
+    margin:15px auto;
+    gap:8px;
+  }
+  .left-column{display:flex;gap:10px;overflow-x:auto}
+  .left-column .panel{min-width:220px}
+  .right-column{display:block}
+  .panel{padding:14px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">AREWAVERSE</div>
+  <input class="search" placeholder="Search people, ideas and opportunities..." />
+  <div class="header-actions">
+    <a href="dashboard.html">Feed</a>
+    <a href="people.html">People</a>
+    <button class="logout" id="logoutBtn">Sign out</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="left-column">
+    <section class="panel profile">
+      <div class="avatar" id="avatar">A</div>
+      <strong id="displayName">Loading...</strong>
+      <div class="username" id="username">@member</div>
+    </section>
+
+    <section class="panel">
+      <h3 class="section-title">My Space</h3>
+      <nav class="nav">
+        <a class="active" href="dashboard.html">⌂ &nbsp; Feed</a>
+        <a href="people.html">♙ &nbsp; People</a>
+        <a href="#contributions">▤ &nbsp; My Contributions</a>
+        <a href="#explore">⌕ &nbsp; Explore</a>
+        <a href="#learn">✧ &nbsp; Learn</a>
+        <a href="#community">◎ &nbsp; Community</a>
+      </nav>
+    </section>
+
+    <section class="panel" id="contributions">
+      <h3 class="section-title">My Contributions</h3>
+      <div class="contribution"><span>Posts</span><span>›</span></div>
+      <div class="contribution"><span>Videos</span><span>›</span></div>
+      <div class="contribution"><span>Articles</span><span>›</span></div>
+      <div class="contribution"><span>Projects</span><span>›</span></div>
+    </section>
+  </aside>
+
+  <main>
+    <h2>Your Feed</h2>
+    <div class="subtitle">Discover ideas, people and opportunities across AREWAVERSE.</div>
+
+    <section class="composer">
+      <input type="text" placeholder="What would you like to share?" disabled>
+      <div class="composer-note">Contribution publishing is coming in the next development phase.</div>
+    </section>
+
+    <section class="panel">
+      <div class="empty">
+        <strong>Your world starts here.</strong><br>
+        Your feed is ready. Contributions and community posts will appear here when we connect the publishing system.
+      </div>
+    </section>
+
+    <section class="panel account-info">
+      <strong>Account information</strong>
+      <div id="accountStatus">Checking your account...</div>
+    </section>
+  </main>
+
+  <aside class="right-column">
+    <section class="panel" id="explore">
+      <h3 class="section-title">Explore AREWAVERSE</h3>
+      <div class="explore-item">♙ People<span>Connect with people around the world</span></div>
+      <div class="explore-item">✧ Knowledge<span>Discover and share knowledge</span></div>
+      <div class="explore-item">◈ Culture<span>Explore cultures and heritage</span></div>
+      <div class="explore-item">▣ Business<span>Discover business connections</span></div>
+      <div class="explore-item">⌁ Opportunities<span>Find opportunities and possibilities</span></div>
+    </section>
+
+    <section class="panel">
+      <h3 class="section-title">Our Vision</h3>
+      <p class="account-info">A global digital ecosystem connecting people, culture and opportunities.</p>
+    </section>
+  </aside>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://mchsdzxfwvblpqqqarvz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_R-EKdAIno4p7gAQqh0P8pA_1JYsEke7';
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function loadDashboard() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('username, display_name')
+    .eq('id', user.id)
+    .single();
+
+  const name = profile?.display_name || user.email || 'Member';
+  const username = profile?.username || 'member';
+
+  document.getElementById('displayName').textContent = name;
+  document.getElementById('username').textContent = '@' + username;
+  document.getElementById('avatar').textContent =
+    name.charAt(0).toUpperCase();
+
+  document.getElementById('accountStatus').textContent =
+    'Signed in as ' + user.email;
+}
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  window.location.href = 'login.html';
+});
+
+loadDashboard();
+</script>
+
+</body>
+</html>
