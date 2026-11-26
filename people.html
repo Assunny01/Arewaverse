@@ -1,157 +1,445 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#071426">
-  <title>People | AREWAVERSE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore People | AREWAVERSE</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #071426;
-      color: #ffffff;
-    }
+<style>
+:root {
+  --navy: #071426;
+  --blue: #173B63;
+  --gold: #D8B46B;
+  --white: #EAF0F8;
+  --muted: #9BAEC5;
+  --card: #10243B;
+  --border: rgba(234,240,248,.10);
+}
 
-    header {
-      padding: 22px 7%;
-      border-bottom: 1px solid #ffffff22;
-    }
+* { box-sizing: border-box; }
 
-    .brand {
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 2px;
-    }
+body {
+  margin: 0;
+  background: var(--navy);
+  color: var(--white);
+  font-family: Arial, sans-serif;
+}
 
-    .brand span {
-      color: #f4c45e;
-    }
+header {
+  height: 68px;
+  padding: 0 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0B1B30;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-    main {
-      max-width: 1000px;
-      margin: auto;
-      padding: 65px 24px;
-    }
+.brand {
+  color: var(--gold);
+  font-size: 21px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
 
-    .tag {
-      color: #f4c45e;
-      letter-spacing: 2px;
-      font-size: 13px;
-    }
+nav {
+  display: flex;
+  gap: 22px;
+}
 
-    h1 {
-      font-size: clamp(38px, 7vw, 65px);
-      margin-bottom: 15px;
-    }
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+}
 
-    .intro {
-      color: #b8c5d6;
-      line-height: 1.8;
-      max-width: 650px;
-    }
+nav a.active, nav a:hover {
+  color: var(--gold);
+}
 
-    .search {
-      width: 100%;
-      padding: 16px;
-      margin: 30px 0;
-      border: 1px solid #ffffff30;
-      border-radius: 10px;
-      background: #102c43;
-      color: white;
-      font-size: 16px;
-    }
+main {
+  max-width: 1100px;
+  margin: 42px auto;
+  padding: 0 20px;
+}
 
-    .people {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-    }
+.heading {
+  margin-bottom: 28px;
+}
 
-    .person {
-      padding: 24px;
-      background: #102c43;
-      border: 1px solid #ffffff20;
-      border-radius: 14px;
-    }
+.heading h1 {
+  font-size: 32px;
+  margin: 0 0 9px;
+  letter-spacing: 1px;
+}
 
-    .person h2 {
-      color: #f4c45e;
-      font-size: 20px;
-    }
+.heading p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 15px;
+}
 
-    .person p {
-      color: #b8c5d6;
-      line-height: 1.6;
-    }
+.search-area {
+  margin-bottom: 26px;
+}
 
-    .status {
-      color: #f4c45e;
-      font-size: 13px;
-    }
+.search-area input {
+  width: 100%;
+  max-width: 600px;
+  padding: 15px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  background: #10243B;
+  color: white;
+  font-size: 15px;
+}
 
-    footer {
-      text-align: center;
-      padding: 25px;
-      color: #8294aa;
-    }
-  </style>
+.search-area input:focus {
+  border-color: var(--gold);
+}
+
+.section-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.members {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 18px;
+}
+
+.member-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  transition: .2s;
+  min-width: 0;
+}
+
+.member-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-3px);
+}
+
+.member-top {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 17px;
+}
+
+.avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: var(--blue);
+  border: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 21px;
+  font-weight: bold;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  overflow-wrap: anywhere;
+}
+
+.username {
+  color: var(--gold);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.bio {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  min-height: 45px;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 55px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.empty h3 {
+  color: var(--white);
+  margin-top: 0;
+}
+
+.status {
+  color: var(--muted);
+  padding: 30px 0;
+}
+
+footer {
+  text-align: center;
+  padding: 35px 15px;
+  margin-top: 60px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media(max-width: 650px) {
+  header { padding: 0 16px; }
+  nav { gap: 13px; }
+  nav a { font-size: 12px; }
+  .brand { font-size: 17px; }
+  main { margin-top: 30px; }
+  .heading h1 { font-size: 27px; }
+  .members { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <div class="brand">AREWA<span>VERSE</span></div>
-  </header>
+<header>
+  <div class="brand">AREWAVERSE</div>
+  <nav>
+    <a href="dashboard.html">Feed</a>
+    <a href="people.html" class="active">Explore</a>
+    <a href="profile.html">Profile</a>
+  </nav>
+</header>
 
-  <main>
-    <div class="tag">PEOPLE · CONNECTION · COMMUNITY</div>
+<main>
+  <section class="heading">
+    <h1>EXPLORE</h1>
+    <p>Discover people. Build connections.</p>
+  </section>
 
-    <h1>People make the ecosystem.</h1>
-
-    <p class="intro">
-      Discover people, build meaningful connections
-      and become part of a global community.
-    </p>
-
+  <div class="search-area">
     <input
-      class="search"
       type="search"
-      placeholder="Discover people and communities..."
+      id="searchInput"
+      placeholder="Search by name or username..."
+      autocomplete="off"
     >
+  </div>
 
-    <section class="people">
+  <div class="section-info">
+    <span>Discover members</span>
+    <span id="memberCount"></span>
+  </div>
 
-      <div class="person">
-        <h2>Creators</h2>
-        <p>Connect with people who create ideas and share creativity.</p>
-        <div class="status">Coming soon</div>
-      </div>
+  <section class="members" id="members">
+    <div class="status">Loading members...</div>
+  </section>
+</main>
 
-      <div class="person">
-        <h2>Students</h2>
-        <p>Meet learners and people who believe in knowledge.</p>
-        <div class="status">Coming soon</div>
-      </div>
+<footer>
+  Connecting people. Culture. Knowledge. Opportunities.
+  <br><br>
+  © 2026 AREWAVERSE
+</footer>
 
-      <div class="person">
-        <h2>Professionals</h2>
-        <p>Connect with skilled people across different industries.</p>
-        <div class="status">Coming soon</div>
-      </div>
+<script>
+const SUPABASE_URL = "https://mchsdzxfwvblpqqqarvz.supabase.co";
 
-    </section>
-  </main>
+const SUPABASE_KEY =
+"sb_publishable_R-EKdAIno4p7gAQqh0P8pA_1JYsEke7";
 
-  <footer>
-    AREWAVERSE · One Connected World
-  </footer>
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const membersContainer = document.getElementById("members");
+const searchInput = document.getElementById("searchInput");
+const memberCount = document.getElementById("memberCount");
+
+let allMembers = [];
+
+function showMessage(title, message) {
+  membersContainer.replaceChildren();
+
+  const box = document.createElement("div");
+  box.className = "empty";
+
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+
+  const paragraph = document.createElement("p");
+  paragraph.textContent = message;
+
+  box.append(heading, paragraph);
+  membersContainer.appendChild(box);
+}
+
+function createMemberCard(member) {
+  const card = document.createElement("article");
+  card.className = "member-card";
+
+  const top = document.createElement("div");
+  top.className = "member-top";
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+
+  const displayName =
+    member.display_name || member.username || "Member";
+
+  const initial = displayName.trim().charAt(0).toUpperCase() || "M";
+
+  if (member.avatar_url) {
+    try {
+      const imageUrl = new URL(member.avatar_url);
+
+      if (imageUrl.protocol === "https:") {
+        const img = document.createElement("img");
+        img.src = imageUrl.href;
+        img.alt = displayName;
+        img.onerror = () => {
+          avatar.replaceChildren();
+          avatar.textContent = initial;
+        };
+        avatar.appendChild(img);
+      } else {
+        avatar.textContent = initial;
+      }
+    } catch {
+      avatar.textContent = initial;
+    }
+  } else {
+    avatar.textContent = initial;
+  }
+
+  const identity = document.createElement("div");
+
+  const name = document.createElement("div");
+  name.className = "member-name";
+  name.textContent = displayName;
+
+  const username = document.createElement("div");
+  username.className = "username";
+  username.textContent = "@" + member.username;
+
+  identity.append(name, username);
+  top.append(avatar, identity);
+
+  const bio = document.createElement("p");
+  bio.className = "bio";
+  bio.textContent = member.bio || "No bio added yet.";
+
+  card.append(top, bio);
+
+  return card;
+}
+
+function renderMembers(list) {
+  membersContainer.replaceChildren();
+  memberCount.textContent = list.length + " members";
+
+  if (list.length === 0) {
+    showMessage(
+      "No members found",
+      "Try another name or username."
+    );
+    memberCount.textContent = "0 members";
+    return;
+  }
+
+  list.forEach(member => {
+    membersContainer.appendChild(createMemberCard(member));
+  });
+}
+
+async function loadMembers() {
+  try {
+    const {
+      data: { session },
+      error: sessionError
+    } = await db.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    if (!session) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const { data, error } = await db
+      .from("profiles")
+      .select("id, username, display_name, bio, avatar_url, created_at")
+      .eq("visibility", "public")
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
+    allMembers = (data || []).filter(
+      member => member.id !== session.user.id
+    );
+
+    if (allMembers.length === 0) {
+      showMessage(
+        "You're among the first here!",
+        "Invite people to join AREWAVERSE. New members will appear here when they create public profiles."
+      );
+      memberCount.textContent = "0 members";
+      return;
+    }
+
+    renderMembers(allMembers);
+
+  } catch (error) {
+    console.error("People module error:", error);
+
+    showMessage(
+      "Unable to load members",
+      "Please check your connection and try again."
+    );
+  }
+}
+
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.trim().toLowerCase();
+
+  const filtered = allMembers.filter(member => {
+    const name = (member.display_name || "").toLowerCase();
+    const username = (member.username || "").toLowerCase();
+
+    return name.includes(query) || username.includes(query);
+  });
+
+  renderMembers(filtered);
+});
+
+loadMembers();
+</script>
 
 </body>
 </html>
