@@ -419,9 +419,9 @@ async function loadMembers() {
     console.error("People module error:", error);
 
     showMessage(
-      "Unable to load members",
-      "Please check your connection and try again."
-    );
+  "Unable to load members",
+  error.message || "Unknown error"
+);
   }
 }
 
